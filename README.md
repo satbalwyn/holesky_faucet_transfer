@@ -1,4 +1,4 @@
-This repo is used to one-time transfer ETH/stETH/wstETH to addresses in addresses.json. If transfer done, the address is stored in claimedAddresses.json
+This repo is used to one-time transfer ETH/stETH/wstETH to addresses in addresses.json. If an address is in the eligibile address list and hasn't been used to claim, transfers will be arranged.
 
 If there is no addresses.json or claimedAddresses.json, create them first. Both are the raw array json.
 
