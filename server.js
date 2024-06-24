@@ -1,8 +1,8 @@
 // server.js
 
 const express = require('express');
-// const cors = require('cors');
 const path = require('path');
+const logger = require('./logger');
 
 const { transferETH, transferStETH, transferWstETH, isValidEthereumAddress } = require('./transferToken');
 const { isAddressAllowed, hasAddressClaimed, addClaimedAddress } = require('./checkAddress');
@@ -58,7 +58,7 @@ app.post('/api/transfer', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error processing claim:', error);
+        logger.error('Error processing claim:', error);
         res.status(500).json({ error: 'Failed to process claim', details: error.message });
     }
 });
@@ -70,7 +70,7 @@ app.get('*', (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    logger.info(`Server running on port ${port}`);
 });
 
 module.exports = app;

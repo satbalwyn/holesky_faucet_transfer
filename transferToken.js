@@ -2,6 +2,7 @@
 
 const { ethers } = require('ethers');
 require('dotenv').config();
+const logger = require('./logger');
 
 // Infura settings
 const infuraProjectId = process.env.INFURA_PROJECT_ID;
@@ -61,10 +62,10 @@ async function transferETH(toAddress) {
     try {
         const txResponse = await wallet.sendTransaction(transaction);
         await txResponse.wait();
-        console.log("transferETH:", txResponse.hash);
+        logger.info("transferETH to: ", toAddress, txResponse.hash);
         // return txResponse.hash;
     } catch (error) {
-        console.error('Error transferring ETH:', error);
+        logger.error('Error transferring ETH:', error);
         throw new Error('Failed to transfer ETH');
     }
 }
@@ -75,11 +76,11 @@ async function transferStETH(toAddress) {
 
     try {
         const tx = await stETHContract.transfer(toAddress, amountToSend);
-        await tx.wait();
+        const receipt = await tx.wait();
         // return receipt.transactionHash;
-        console.log("transferStETH:", receipt.transactionHash);
+        logger.info("transferStETH:", toAddress, receipt.transactionHash);
     } catch (error) {
-        console.error('Error transferring stETH:', error);
+        logger.error('Error transferring stETH:', error);
         throw new Error('Failed to transfer stETH');
     }
 }
@@ -90,11 +91,11 @@ async function transferWstETH(toAddress) {
 
     try {
         const tx = await wstETHContract.transfer(toAddress, amountToSend);
-        await tx.wait();
+        const receipt = await tx.wait();
         // return receipt.transactionHash;
-        console.log("transferWstETH:", receipt.transactionHash);
+        logger.info("transferWstETH:", toAddress, receipt.transactionHash);
     } catch (error) {
-        console.error('Error transferring wstETH:', error);
+        logger.error('Error transferring wstETH:', error);
         throw new Error('Failed to transfer wstETH');
     }
 }

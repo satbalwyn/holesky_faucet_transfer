@@ -2,10 +2,11 @@
 
 const fs = require('fs').promises;
 const path = require('path');
+const logger = require('./logger');
 
 // Paths to the JSON files
-const allowedAddressesPath = path.join(__dirname, 'addresses.json');
-const claimedAddressesPath = path.join(__dirname, 'claimedAddresses.json');
+const allowedAddressesPath = path.join(__dirname, 'data', 'addresses.json');
+const claimedAddressesPath = path.join(__dirname, 'data', 'claimedAddresses.json');
 
 // Variables to store the loaded addresses
 let allowedAddressesSet = null;
@@ -25,7 +26,7 @@ async function loadAddresses(filePath, setVariable) {
         }
         return new Set(addresses.map(address => address.toLowerCase()));
     } catch (error) {
-        console.error(`Error loading addresses from ${filePath}:`, error);
+        logger.error(`Error loading addresses from ${filePath}:`, error);
         return new Set(); // Return an empty set if there's an error
     }
 }
@@ -63,7 +64,8 @@ async function addClaimedAddress(address) {
     if (!claimedAddresses.has(lowerCaseAddress)) {
         claimedAddresses.add(lowerCaseAddress);
         await fs.writeFile(claimedAddressesPath, JSON.stringify(Array.from(claimedAddresses), null, 2));
-        console.log(`Address ${address} added to claimed addresses`);
+        logger.info(`Address ${address} added to claimed addresses`);
+        
     }
 }
 
