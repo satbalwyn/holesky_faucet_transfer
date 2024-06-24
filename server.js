@@ -58,7 +58,9 @@ app.post('/api/transfer', async (req, res) => {
         });
 
     } catch (error) {
-        logger.error('Error processing claim:', error);
+        logger.error(
+            `Error processing claim: ${error}`
+        );
         res.status(500).json({ error: 'Failed to process claim', details: error.message });
     }
 });

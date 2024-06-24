@@ -62,10 +62,9 @@ async function transferETH(toAddress) {
     try {
         const txResponse = await wallet.sendTransaction(transaction);
         await txResponse.wait();
-        logger.info("transferETH to: ", toAddress, txResponse.hash);
-        // return txResponse.hash;
+        logger.info(`transferETH to: ${toAddress}, hash: ${txResponse.hash}`);
     } catch (error) {
-        logger.error('Error transferring ETH:', error);
+        logger.error(`Error transferring ETH: ${error}`);
         throw new Error('Failed to transfer ETH');
     }
 }
@@ -77,10 +76,9 @@ async function transferStETH(toAddress) {
     try {
         const tx = await stETHContract.transfer(toAddress, amountToSend);
         const receipt = await tx.wait();
-        // return receipt.transactionHash;
-        logger.info("transferStETH:", toAddress, receipt.transactionHash);
+        logger.info(`transferStETH to: ${toAddress}, hash: ${receipt.transactionHash}`);
     } catch (error) {
-        logger.error('Error transferring stETH:', error);
+        logger.error(`Error transferring stETH: ${error}`);
         throw new Error('Failed to transfer stETH');
     }
 }
@@ -92,10 +90,9 @@ async function transferWstETH(toAddress) {
     try {
         const tx = await wstETHContract.transfer(toAddress, amountToSend);
         const receipt = await tx.wait();
-        // return receipt.transactionHash;
-        logger.info("transferWstETH:", toAddress, receipt.transactionHash);
+        logger.info(`transferWstETH to: ${toAddress}, hash: ${receipt.transactionHash}`);
     } catch (error) {
-        logger.error('Error transferring wstETH:', error);
+        logger.error(`Error transferring WstETH: ${error}`);
         throw new Error('Failed to transfer wstETH');
     }
 }

@@ -26,7 +26,7 @@ async function loadAddresses(filePath, setVariable) {
         }
         return new Set(addresses.map(address => address.toLowerCase()));
     } catch (error) {
-        logger.error(`Error loading addresses from ${filePath}:`, error);
+        logger.error(`Error loading addresses from ${filePath}: ${error}`);
         return new Set(); // Return an empty set if there's an error
     }
 }
@@ -64,7 +64,7 @@ async function addClaimedAddress(address) {
     if (!claimedAddresses.has(lowerCaseAddress)) {
         claimedAddresses.add(lowerCaseAddress);
         await fs.writeFile(claimedAddressesPath, JSON.stringify(Array.from(claimedAddresses), null, 2));
-        logger.info(`Address ${address} added to claimed addresses`);
+        logger.info(`${address} added to claimed addresses`);
         
     }
 }
