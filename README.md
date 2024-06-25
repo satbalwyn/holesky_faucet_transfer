@@ -4,6 +4,8 @@ Initially, create a `data` folder for `addresses.json` and `claimedAddresses.jso
 
 Both are the raw array json. `Addresses.json` includes the addresses that are eligible to claim. `claimedAddresses.json` includes the addresses that have claimed faucet.
 
+NOTE: Make sure to create both `addresses.json` and `claimedAddresses.json`. The second one should contain only "[]" if you are starting the application for the first time.
+
 
 # ENV Parameters (.env)
 
@@ -11,13 +13,10 @@ Both are the raw array json. `Addresses.json` includes the addresses that are el
 PRIVATE_KEY=sender_private_key
 
 INFURA_PROJECT_ID=infura_project_id
-INFURA_PROJECT_SECRET=infura_project_secret
 
 ETH_AMOUNT=0.01
 STETH_AMOUNT=0.01
 WSTETH_AMOUNT=0.01
-
-NODE_ENV=production
 ```
 
 ## Install
