@@ -24,6 +24,8 @@ app.use(express.json());
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+const inProgress = new Map();
+
 app.post('/api/transfer', async (req, res) => {
     const { address } = req.body;
 
@@ -34,6 +36,15 @@ app.post('/api/transfer', async (req, res) => {
     if (!isValidEthereumAddress(address)) {
         return res.status(400).json({ error: 'Invalid Ethereum address' });
     }
+    let token;
+    let failed = false;
+
+    //  Do no allow multiple claims
+    if (inProgress.get(address)) {
+        return res.status(500).json({ error: 'Already processing this address' });
+    }
+    //  Mark address as being processed to avoid multiple claims
+    inProgress.set(address, true);
 
     try {
 
@@ -47,22 +58,37 @@ app.post('/api/transfer', async (req, res) => {
           return res.status(403).json({ error: 'Address has already claimed' });
       }
 
-        await transferETH(address);
-        await transferStETH(address);
-        await transferWstETH(address);
-
-        await addClaimedAddress(address);
-
+      switch (Date.now() % 3) {
+        case 0:
+            token = 'ETH';
+            await transferETH(address);
+            break;
+        case 1:
+            token = 'stETH';
+            await transferStETH(address);
+            break;
+        case 2:
+            token = 'wstETH';
+            await transferWstETH(address);
+            break;
+      }
         res.json({ 
-            message: 'transfer done'
+            message: `${token} transferred`
         });
 
     } catch (error) {
+        failed = true;
         logger.error(
             `Error processing claim: ${error}`
         );
         res.status(500).json({ error: 'Failed to process claim', details: error.message });
     }
+
+    if (!failed) {
+        await addClaimedAddress(address);
+    }
+
+    inProgress.delete(address);
 });
 
 // For any other routes, serve the index.html file
