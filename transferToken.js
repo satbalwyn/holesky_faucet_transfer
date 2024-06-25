@@ -41,59 +41,95 @@ function isValidEthereumAddress(address) {
     return ethers.isAddress(address);
 }
 
-// Function to transfer ETH
 async function transferETH(toAddress) {
     const amountToSend = ethers.parseEther(process.env.ETH_AMOUNT);
+    const maxRetries = 3;
+    let retries = 0;
 
-    const nonce = await provider.getTransactionCount(wallet.address, 'latest');
-    const feeData = await provider.getFeeData();
+    while (retries < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * 12 * (1 + Date.now() % 3)));
 
-    const transaction = {
-        to: toAddress,
-        value: amountToSend,
-        gasLimit: '21000',
-        maxFeePerGas: feeData.maxFeePerGas,
-        maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
-        nonce: nonce,
-        type: 2,
-        chainId: 17000, // Holesky chain ID
-    };
+        try {
+            const nonce = await provider.getTransactionCount(wallet.address, 'latest');
+            const feeData = await provider.getFeeData();
 
-    try {
-        const txResponse = await wallet.sendTransaction(transaction);
-        await txResponse.wait();
-        logger.info(`transferETH to: ${toAddress}, hash: ${txResponse.hash}`);
-    } catch (error) {
-        logger.error(`Error transferring ETH: ${error}`);
-        throw new Error('Failed to transfer ETH');
+            const transaction = {
+                to: toAddress,
+                value: amountToSend,
+                gasLimit: '21000',
+                maxFeePerGas: feeData.maxFeePerGas,
+                maxPriorityFeePerGas: feeData.maxPriorityFeePerGas,
+                nonce: nonce,
+                type: 2,
+                chainId: 17000, // Holesky chain ID
+            };
+
+            const txResponse = await wallet.sendTransaction(transaction);
+            await txResponse.wait();
+            logger.info(`transferETH to: ${toAddress}, hash: ${txResponse.hash}`);
+            return; // Success, exit the function
+        } catch (error) {
+            retries++;
+            logger.warn(`Attempt ${retries} failed to transfer ETH: ${error.message}`);
+
+            if (retries >= maxRetries) {
+                logger.error(`Failed to transfer ETH after ${maxRetries} attempts: ${error}`);
+                throw new Error('Failed to transfer ETH');
+            }
+        }
     }
 }
 
-// Function to transfer stETH
 async function transferStETH(toAddress) {
-    const amountToSend = ethers.parseEther(process.env.STETH_AMOUNT); // Fixed amount to send (0.01 stETH)
+    const amountToSend = ethers.parseEther(process.env.STETH_AMOUNT);
+    const maxRetries = 3;
+    let retries = 0;
 
-    try {
-        const tx = await stETHContract.transfer(toAddress, amountToSend);
-        const receipt = await tx.wait();
-        logger.info(`transferStETH to: ${toAddress}, hash: ${receipt.transactionHash}`);
-    } catch (error) {
-        logger.error(`Error transferring stETH: ${error}`);
-        throw new Error('Failed to transfer stETH');
+    while (retries < maxRetries) {
+        // wait to decrease the nonce conflict problem
+        await new Promise(resolve => setTimeout(resolve, 1000 * 12 * (1 + Date.now() % 3)));
+
+        try {
+            const tx = await stETHContract.transfer(toAddress, amountToSend);
+            const receipt = await tx.wait();
+            logger.info(`transferStETH to: ${toAddress}, hash: ${receipt.transactionHash}`);
+            return; // Success, exit the function
+        } catch (error) {
+            retries++;
+            logger.warn(`Attempt ${retries} failed to transfer stETH: ${error.message}`);
+
+            if (retries >= maxRetries) {
+                logger.error(`Failed to transfer stETH after ${maxRetries} attempts: ${error}`);
+                throw new Error('Failed to transfer stETH');
+            }
+        }
     }
 }
 
-// Function to transfer wstETH
+
 async function transferWstETH(toAddress) {
     const amountToSend = ethers.parseEther(process.env.WSTETH_AMOUNT);
+    const maxRetries = 3;
+    let retries = 0;
 
-    try {
-        const tx = await wstETHContract.transfer(toAddress, amountToSend);
-        const receipt = await tx.wait();
-        logger.info(`transferWstETH to: ${toAddress}, hash: ${receipt.transactionHash}`);
-    } catch (error) {
-        logger.error(`Error transferring WstETH: ${error}`);
-        throw new Error('Failed to transfer wstETH');
+    while (retries < maxRetries) {
+        // wait to decrease the nonce conflict problem
+        await new Promise(resolve => setTimeout(resolve, 1000 * 12 * (1 + Date.now() % 3)));
+
+        try {
+            const tx = await wstETHContract.transfer(toAddress, amountToSend);
+            const receipt = await tx.wait();
+            logger.info(`transferWstETH to: ${toAddress}, hash: ${receipt.transactionHash}`);
+            return; // Success, exit the function
+        } catch (error) {
+            retries++;
+            logger.warn(`Attempt ${retries} failed to transfer WstETH: ${error.message}`);
+
+            if (retries >= maxRetries) {
+                logger.error(`Failed to transfer WstETH after ${maxRetries} attempts: ${error}`);
+                throw new Error('Failed to transfer wstETH');
+            }
+        }
     }
 }
 
