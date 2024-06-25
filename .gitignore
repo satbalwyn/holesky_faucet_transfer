@@ -1,7 +1,8 @@
 # Local Netlify folder
 .env
 node_modules
-data/addresses.json
+data/addresses.csv
 data/claimedAddresses.json
 logs
 package-lock.json
+
