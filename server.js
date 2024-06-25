@@ -9,17 +9,6 @@ const { isAddressAllowed, hasAddressClaimed, addClaimedAddress } = require('./ch
 
 const app = express();
 app.use(express.json());
-// app.use(cors()); // Enable CORS for all routes
-
-// CORS configuration
-// const corsOptions = {
-//     origin: 'http://localhost:3000',
-//     methods:  ['GET', 'POST'],
-//     allowedHeaders: ['Content-Type'],
-// };
-
-// // Enable CORS for all routes
-// app.use(cors(corsOptions));
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -50,11 +39,13 @@ app.post('/api/transfer', async (req, res) => {
 
       const isAllowed = await isAddressAllowed(address);
       if (!isAllowed) {
+          inProgress.delete(address);
           return res.status(403).json({ error: 'Address is not allowed to claim' });
       }
 
       const hasClaimed = await hasAddressClaimed(address);
       if (hasClaimed) {
+          inProgress.delete(address);
           return res.status(403).json({ error: 'Address has already claimed' });
       }
 

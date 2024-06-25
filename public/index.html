@@ -3,75 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claim Form</title>
+    <title>Lido CSM Holesky Faucet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            padding: 20px;
             background-color: #f0f0f0;
         }
         .container {
+            max-width: 600px;
+            margin: 0 auto;
             background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #333;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
         }
         .form-group input {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             box-sizing: border-box;
+            font-size: 16px;
         }
         .form-group button {
-            padding: 10px 15px;
-            background-color: #007bff;
+            width: 100%;
+            padding: 12px;
+            background-color: #8800ff;
             color: #fff;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        .form-group button:hover {
+            background-color: #7700dd;
         }
         .form-group button:disabled {
             background-color: #ccc;
+            cursor: not-allowed;
         }
         .message {
-            margin-top: 15px;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .message.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .message.error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .faq {
+            margin-top: 40px;
+        }
+        .faq h2 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .faq-item {
+            margin-bottom: 20px;
+        }
+        .faq-question {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .faq-answer {
+            color: #555;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Claim Form</h1>
+        <h1>Holesky Faucet For CSM Testnet</h1>
         <form id="claimForm">
             <div class="form-group">
                 <label for="address">Ethereum Address</label>
                 <input type="text" id="address" name="address" required>
             </div>
             <div class="form-group">
-                <button type="submit" id="submit-button">Claim</button>
+                <button type="submit" id="submitButton">Claim</button>
             </div>
         </form>
         <div class="message" id="message"></div>
+
+        <div class="faq">
+            <h2>You have to know:</h2>
+            <div class="faq-item">
+                <div class="faq-question">Why claim?</div>
+                <div class="faq-answer">Holesky faucet is provided for some CSM testnet participants who don't have enough (st)ETH as bond.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Who can claim?</div>
+                <div class="faq-answer">Lido community stakers can claim only. If have a community staker role in Lido discord, you probably are eligible.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Which token can I get?</div>
+                <div class="faq-answer">You will be sent any of 3 tokens (i.e. ETH, stETH, wstETH).</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Can I claim in multiple times?</div>
+                <div class="faq-answer">Sorry, each eligible address can claim once.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Is it developed by Lido Dao?</div>
+                <div class="faq-answer">No, it isn't. It's developed by community members for community's use only. If you have any issue, please ask in Lido discord.</div>
+            </div>
+        </div>
     </div>
 
     <script>
         document.getElementById('claimForm').addEventListener('submit', async function(event) {
-            var submitButton = document.getElementById("submit-button");
-            submitButton.disabled = true;
             event.preventDefault();
+            const submitButton = document.getElementById('submitButton');
             const address = document.getElementById('address').value;
             const messageDiv = document.getElementById('message');
+            
+            submitButton.disabled = true;
             messageDiv.textContent = 'Your request is now being processed';
+            messageDiv.style.display = 'block';
+            messageDiv.className = 'message';
 
             try {
                 const response = await fetch('/api/transfer', {
@@ -86,13 +160,20 @@
 
                 if (response.ok) {
                     messageDiv.textContent = `Success: ${result.message}`;
+                    messageDiv.className = 'message success';
+                    // Keep the button disabled on success
                 } else {
-                    messageDiv.textContent = `Error: ${result.error}`;
+                    messageDiv.textContent = `${result.error}`;
+                    messageDiv.className = 'message error';
+                    submitButton.disabled = false; // Re-enable the button on error
                 }
             } catch (error) {
                 messageDiv.textContent = `Error: ${error.message}`;
+                messageDiv.className = 'message error';
+                submitButton.disabled = false; // Re-enable the button on error
             }
-            submitButton.disabled = false;
+
+            messageDiv.style.display = 'block';
         });
     </script>
 </body>
