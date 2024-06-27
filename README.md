@@ -1,10 +1,10 @@
-This repo is used to one-time transfer ETH/stETH/wstETH to addresses in addresses.csv. If an address is in the eligibile address list and hasn't been used to claim, transfers will be arranged.
+This repo is used to one-time transfer ETH/stETH/wstETH to addresses in addresses.json. If an address is in the eligibile address list and hasn't been used to claim, transfers will be arranged.
 
-Initially, create a `data` folder for `addresses.csv` and `claimedAddresses.json`. 
+Initially, create a `data` folder for `addresses.json` and `claimedAddresses.json`. 
 
-`addresses.csv` includes the addresses that are eligible to claim. `claimedAddresses.json` includes the addresses that have claimed faucet.
+`addresses.json` includes the addresses that are eligible to claim. `claimedAddresses.json` includes the addresses that have claimed faucet.
 
-NOTE: Make sure to create both `addresses.csv` and `claimedAddresses.json`. The second one should contain only "[]" if you are starting the application for the first time.
+NOTE: Make sure to create both `addresses.json` and `claimedAddresses.json`. The second one should contain only "[]" if you are starting the application for the first time.
 
 
 # ENV Parameters (.env)

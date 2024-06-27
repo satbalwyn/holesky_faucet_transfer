@@ -7,7 +7,7 @@ const csv = require('csv-parse/sync');
 const { add } = require('winston');
 
 // Paths to the JSON files
-const allowedAddressesPath = path.join(__dirname, 'data', 'addresses.csv');
+const allowedAddressesPath = path.join(__dirname, 'data', 'addresses.json');
 const claimedAddressesPath = path.join(__dirname, 'data', 'claimedAddresses.json');
 
 // Variables to store the loaded addresses
@@ -50,12 +50,14 @@ async function loadAddresses(filePath, setVariable) {
 // Function to load allowed addresses
 async function loadAllowedAddresses() {
     allowedAddressesSet = await loadAddresses(allowedAddressesPath, allowedAddressesSet);
+    logger.info(`The number of allowed addresses is ${allowedAddressesSet.size}`);
     return allowedAddressesSet;
 }
 
 // Function to load claimed addresses
 async function loadClaimedAddresses() {
     claimedAddressesSet = await loadAddresses(claimedAddressesPath, claimedAddressesSet);
+    logger.info(`The number of addresses that have claimed is ${claimedAddressesSet.size}`);
     return claimedAddressesSet;
 }
 
